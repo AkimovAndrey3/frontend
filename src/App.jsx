@@ -2,9 +2,11 @@ import { useState } from 'react';
 
 function App() {
     const [text, setText] = useState('');
-    const [message, setMessage] = useState('');
+    const [secondText, setSecondText] = useState('');
+    const [data, setData] = useState([]);
 
     const handleSubmit = async () => {
+        if (!text) return; // Пропускаем пустой ввод
         try {
             const response = await fetch('http://127.0.0.1:8000/save', {
                 method: 'POST',
@@ -14,24 +16,40 @@ function App() {
                 body: JSON.stringify({ text }),
             });
             const result = await response.json();
-            setMessage(result.message);
-            setText(''); // Очистка поля после отправки
+            setSecondText(result.message); // Выводим сообщение во второе поле
+            setTimeout(() => setSecondText(''), 2000); // Очищаем поле через 2 секунды
+            setText(''); // Очищаем первое поле после отправки
         } catch (error) {
-            setMessage('Error: ' + error.message);
+            setSecondText('Error: ' + error.message);
+            setTimeout(() => setSecondText(''), 2000);
         }
+    };
+
+    const handleRead = async () => {
+        const response = await fetch('http://127.0.0.1:8000/read');
+        const result = await response.json();
+        setData(result.data);
+        setSecondText(result.message || 'Data loaded successfully!');
+        setTimeout(() => setSecondText(''), 2000);
     };
 
     return (
         <div>
-            <h1>Frontend v1.0</h1>
+            <h1>Frontend v2.0</h1>
             <input
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Enter your text"
+                placeholder="Enter text to save"
             />
             <button onClick={handleSubmit}>Send</button>
-            {message && <p>{message}</p>}
+            <input
+                type="text"
+                value={data}
+                readOnly
+                placeholder="Second input (shows messages)"
+            />
+            <button onClick={handleRead}>Read Data</button>
         </div>
     );
 }
