@@ -8,7 +8,7 @@ function App() {
     const handleSubmit = async () => {
         if (!text) return; // Пропускаем пустой ввод
         try {
-            const response = await fetch('http://127.0.0.1:8000/save', {
+            const response = await fetch('http://localhost:8000/save', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ function App() {
     };
 
     const handleRead = async () => {
-        const response = await fetch('http://127.0.0.1:8000/read');
+        const response = await fetch('http://localhost:8000/read');
         const result = await response.json();
         setData(result.data);
         setSecondText(result.message || 'Data loaded successfully!');
